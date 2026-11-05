@@ -46,19 +46,11 @@ def main(args):
     locations = 'aus-states-cities' if args.metric in ['WSDI', 'Rx1day', 'Rx5day'] else 'aus-states'
 
     if args.metric == "SPEI":
-        if args.highres:
-            quantiles = [yrs_to_quantile(yr) for yr in np.arange(100, 9, -5)]
-            decimal_places = 3
-        else:
-            quantiles = np.array([0.01, 0.02, 0.025, 0.03, 0.033, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1])
-            decimal_places = 1
+        quantiles = [yrs_to_quantile(yr) for yr in np.arange(100, 9, -5)]
+        decimal_places = 3
     else:
-        if args.highres:
-            quantiles = [yrs_to_quantile(yr) for yr in np.arange(10, 101, 5)]
-            decimal_places = 3
-        else:
-            quantiles = np.array([0.90, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.967, 0.97, 0.975, 0.98, 0.99])
-            decimal_places = 1
+        quantiles = [yrs_to_quantile(yr) for yr in np.arange(10, 101, 5)]
+        decimal_places = 3
     thresholds = df_ref_data.quantile(quantiles)
 
     # write out likelihoods
@@ -93,7 +85,7 @@ def main(args):
             odds.to_csv(f, mode='a', header=True, index=True)
 
     # write out thresholds
-    thresholds.index = (thresholds.index * 100).round(decimals=1)
+    thresholds.index = (thresholds.index * 100).round(decimals=decimal_places)
     thresholds.index.name = 'percentile'
     thresholds = thresholds.round(decimals=2)
     pre_header_lines = [
@@ -119,6 +111,5 @@ if __name__ == '__main__':
     parser.add_argument("infile", type=str, help="input csv file name (i.e. for a given model and experiment)")
     parser.add_argument("metric", type=str, choices=('WSDI', 'SPEI', 'FFDIx', 'FFDIgt99p', 'Rx1day', 'Rx5day'), help="input metric")
     parser.add_argument("outdir", type=str, help="output directory")
-    parser.add_argument("--highres", action="store_true", default=False, help="High resolution percentile granularity")
     args = parser.parse_args()
     main(args)
