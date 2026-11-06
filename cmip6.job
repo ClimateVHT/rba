@@ -1,8 +1,8 @@
 #!/bin/bash
 #PBS -P xv83
-#PBS -q hugemem
-#PBS -l walltime=10:00:00
-#PBS -l mem=300GB
+#PBS -q normal
+#PBS -l walltime=5:00:00
+#PBS -l mem=100GB
 #PBS -l storage=gdata/xv83+gdata/ia39+gdata/fs38+gdata/oi10
 #PBS -l wd
 #PBS -l ncpus=1
@@ -14,7 +14,7 @@
 #   qsub -v metric=wsdi,model=UKESM1-0-LL,ssp=ssp585,run=r4i1p1f2,grid=gn,hversion='v*',sversion=v20211201 cmip6.job
 
 # Resouces:
-#  WSDI, SPEI (default): 5 hours, 100GB
+#  WSDI, SPEI, Rx1day (default): 5 hours, 100GB
 #  WSDI (EC-Earth): 5 hours, 300GB
 #  SPEI (EC-Earth): 20 hours, 300GB
 #  FFDI: 20 hours, 200GB

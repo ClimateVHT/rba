@@ -3,7 +3,8 @@
 #
 # Usage: bash run.sh {model} {ssp} {metric} {job} {flags}
 #
-#   model:   ACCESS-CM2 ACCESS-ESM1-5 MPI-ESM1-2-LR
+#   model:   ACCESS-CM2 ACCESS-ESM1-5 CanESM5 CMCC-ESM2 CNRM-ESM2-1 EC-Earth
+#            EC-Earth-Veg IPSL-CM6A-LR MPI-ESM1-2-LR UKESM1-0-LL
 #   ssp:     ssp126 ssp245 ssp370 ssp585
 #   metric:  wsdi spei ffdi rx1day rx5day
 #   job:     test calc clean
