@@ -3,7 +3,8 @@
 #
 # Usage: bash concat_csv.sh {model} {ssp} {metric} {flags}
 #
-#   model:   ACCESS-CM2 ACCESS-ESM1-5 MPI-ESM1-2-LR
+#   model:   ACCESS-CM2 ACCESS-ESM1-5 CanESM5 CMCC-ESM2 CNRM-ESM2-1 EC-Earth
+#            EC-Earth-Veg IPSL-CM6A-LR MPI-ESM1-2-LR UKESM1-0-LL
 #   ssp:     ssp126 ssp245 ssp370 ssp585
 #   metric:  wsdi spei ffdi rx1day rx5day
 #   flags:   optional flags (e.g. -n for dry run)
@@ -55,13 +56,18 @@ outfile=${data_dir}/${metric}_${tscale}_${model}_${ssp}_ensemble_${locations}_18
 
 command1="${python} concat_csv.py ${infiles[@]} ${outfile}"
 command2="${python} likelihoods.py ${outfile} ${like_metric} ${data_dir}"
+clean="rm ${data_dir}/${metric}_${tscale}_9*"
 
 if [[ "${flags}" == "-n" ]] ; then
     echo ${command1}
+    #echo ${clean}
     echo ${command2}
 else
     echo ${command1}
     ${command1}
+    #echo ${clean}
+    #${clean}
     echo ${command2}
     ${command2}
+
 fi
