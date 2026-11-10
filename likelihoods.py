@@ -45,18 +45,16 @@ def main(args):
     metric_label = args.metric.lower()
     locations = 'aus-states-cities' if args.metric in ['WSDI', 'Rx1day', 'Rx5day'] else 'aus-states'
 
+    quantiles = [yrs_to_quantile(yr) for yr in np.arange(10, 101, 5)]
     if args.metric == "SPEI":
-        quantiles = [yrs_to_quantile(yr) for yr in np.arange(100, 9, -5)]
-        decimal_places = 3
-    else:
-        quantiles = [yrs_to_quantile(yr) for yr in np.arange(10, 101, 5)]
-        decimal_places = 3
-    thresholds = df_ref_data.quantile(quantiles)
-
+        quantiles = 1 - np.array(quantiles)
+    thresholds = df_ref_data.quantile(quantiles)    
+    
     # write out likelihoods
+    decimal_places = 3
     for quantile in quantiles:
         percentile = round(quantile * 100, decimal_places)
-        plabel = str(percentile).ljust(decimal_places+3, "0").replace('.', '-')
+        plabel = f'{percentile:06.3f}'.replace('.', '-')
         if quantile > 0.5:
             df_threshold_test = df_data > thresholds.loc[quantile]
         else:
@@ -65,17 +63,18 @@ def main(args):
         odds.index = df['year'].unique()
         odds = odds.dropna()
         odds.index.name = 'year'
-#        odds = odds.round(decimals=1)
+        odds = odds.round(decimals=3)
         start_year = odds.index[0]
         end_year = odds.index[-1]
 
+        direction = 'not exceeding' if args.metric == 'SPEI' else 'exceeding'
         pre_header_lines = [
             f"Metric: {args.metric}",
             f"Threshold: {percentile} percentile over the 1950-2014 period",
             f"Model: {model}",
             f"Experiment: {experiment}",
             f"Runs: {runs}",
-            "Description: Probability (%) of exceeding the threshold calculated empirically across all model runs for a 20-year rolling window centered on each year",
+            f"Description: Probability (%) of {direction} the threshold calculated empirically across all model runs for a 20-year rolling window centered on each year",
             f"File history: {history}"
         ]
         outfile = f"{args.outdir}/{metric_label}_yr_{plabel}p-likelihood_{model}_{experiment}_{locations}_{start_year}-{end_year}.csv"
